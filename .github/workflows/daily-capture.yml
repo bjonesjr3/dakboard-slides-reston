@@ -1,0 +1,43 @@
+name: Daily Slide Capture
+
+on:
+  schedule:
+    # Runs at 12:00 UTC (08:00 AM EDT / 07:00 AM EST)
+    - cron: '0 12 * * *'
+  # Allows you to manually trigger the capture anytime
+  workflow_dispatch:
+
+jobs:
+  capture-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install playwright
+
+      - name: Install Playwright Chromium Dependencies
+        run: npx playwright install chromium --with-deps
+
+      - name: Capture Screenshots
+        run: node capture.js
+
+      - name: Publish Images without History Buildup
+        run: |
+          cd images
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan gh-pages
+          git add .
+          git commit -m "Update daily slides [skip ci]"
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git push -f origin gh-pages
