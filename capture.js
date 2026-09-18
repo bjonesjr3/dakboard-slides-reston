@@ -1,7 +1,7 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 
-// Replace these with your actual Canva view/embed links:
+// Your exact Canva links
 const slides = [
   { name: 'lighthouse.png', url: 'https://www.canva.com/design/DAHSvid9_mo/poez2AtuAhGiU_Ny_-LrjA/view' },
   { name: 'basictraining.png', url: 'https://www.canva.com/design/DAHSvuFPbDs/oVs89StvLVF23ZaybyrNxA/view' },
@@ -17,7 +17,6 @@ const slides = [
     fs.mkdirSync('./images');
   }
 
-  // Launch Chromium with full 1080p resolution
   const browser = await chromium.launch();
   const context = await browser.newContext({
     viewport: { width: 1920, height: 1080 }
@@ -27,30 +26,32 @@ const slides = [
     console.log(`Rendering ${slide.name}...`);
     const page = await context.newPage();
     
-    // Wait until Canva finishes network rendering
-    await page.goto(slide.url, { waitUntil: 'networkidle' });
+    // Automatically upgrade the URL to Canva's clean embed mode
+    const embedUrl = slide.url.includes('?embed') ? slide.url : slide.url + '?embed';
     
-    // Optional delay to allow dynamic Canva animations to settle
+    await page.goto(embedUrl, { waitUntil: 'networkidle' });
+    
+    // Give Canva's canvas time to render fully
     await page.waitForTimeout(3000);
 
-    // === NEW CODE: Strip away the Canva UI before taking the screenshot ===
-    await page.evaluate(() => {
-      // Remove top header and bottom footer areas
-      document.querySelectorAll('header, footer').forEach(el => el.remove());
-      
-      // Remove all clickable buttons like Share, Zoom, and Page navigation arrows
-      document.querySelectorAll('button').forEach(el => el.remove());
-      
-      // Remove Canva logos and watermark links
-      document.querySelectorAll('a[href*="canva.com"]').forEach(el => el.remove());
-    });
-    // =====================================================================
+    // Inject a permanent CSS style to force all Canva links, buttons, and footers to be completely invisible
+    await page.addStyleTag({ content: `
+      a, button, [class*="footer"], [class*="overlay"], [class*="toolbar"] { 
+        display: none !important; 
+        opacity: 0 !important; 
+        visibility: hidden !important; 
+      }
+    `});
 
-    // Save screenshot directly over existing file
+    // Move the virtual mouse off-screen to trigger Canva's auto-hide feature just in case
+    await page.mouse.move(0, 0);
+    await page.waitForTimeout(1000);
+
+    // Capture the clean screenshot
     await page.screenshot({ path: `./images/${slide.name}` });
     await page.close();
   }
 
   await browser.close();
-  console.log('All slides captured.');
+  console.log('All slides captured cleanly.');
 })();
