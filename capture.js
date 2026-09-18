@@ -33,6 +33,19 @@ const slides = [
     // Optional delay to allow dynamic Canva animations to settle
     await page.waitForTimeout(3000);
 
+    // === NEW CODE: Strip away the Canva UI before taking the screenshot ===
+    await page.evaluate(() => {
+      // Remove top header and bottom footer areas
+      document.querySelectorAll('header, footer').forEach(el => el.remove());
+      
+      // Remove all clickable buttons like Share, Zoom, and Page navigation arrows
+      document.querySelectorAll('button').forEach(el => el.remove());
+      
+      // Remove Canva logos and watermark links
+      document.querySelectorAll('a[href*="canva.com"]').forEach(el => el.remove());
+    });
+    // =====================================================================
+
     // Save screenshot directly over existing file
     await page.screenshot({ path: `./images/${slide.name}` });
     await page.close();
