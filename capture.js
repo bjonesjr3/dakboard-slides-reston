@@ -3,13 +3,16 @@ const fs = require('fs');
 
 // Your exact Canva links
 const slides = [
+  { name: 'coverslide.png', url: 'https://www.canva.com/design/DAHSvsnbf18/Z2a8o3VXimyiRF5tk7LfjA/view' },
   { name: 'lighthouse.png', url: 'https://www.canva.com/design/DAHSvid9_mo/poez2AtuAhGiU_Ny_-LrjA/view' },
   { name: 'basictraining.png', url: 'https://www.canva.com/design/DAHSvuFPbDs/oVs89StvLVF23ZaybyrNxA/view' },
   { name: 'baptism.png', url: 'https://www.canva.com/design/DAHSviPMZHE/FTie-c6Ki8PzU0upfbS6uQ/view' },
   { name: 'csm.png', url: 'https://www.canva.com/design/DAHSvsI0uPk/zkoSJbEFhD9vuw2OS6beHg/view' },
   { name: 'socials.png', url: 'https://www.canva.com/design/DAHSvjHD4uA/LRXZxkzwArA4OxVMbh0eIQ/view' },
   { name: 'lightteam.png', url: 'https://www.canva.com/design/DAHSvsDsnzg/JY37QsbNkiXzqTGoydsDqg/view' },
-  { name: 'events.png', url: 'https://www.canva.com/design/DAHSvsV38wM/UlDeX6Q-BAOYqUOxVVNwyQ/view' }
+  { name: 'weeklyevents.png', url: 'https://www.canva.com/design/DAHSvsV38wM/UlDeX6Q-BAOYqUOxVVNwyQ/view' },
+  { name: 'eventspage.png', url: 'https://www.canva.com/design/DAHV8pQUKPQ/CkkNPYN0817cphTiz0TbfQ/view' },
+  { name: 'endslide.png', url: 'https://www.canva.com/design/DAHSvobR_18/9ghXrlUH7eB-MyZnSRc4yg/view' }
 ];
 
 (async () => {
